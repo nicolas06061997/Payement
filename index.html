@@ -193,7 +193,7 @@ p.help{color:var(--mute);font-size:14px;margin:2px 0 10px}
 
 <script>
 'use strict';
-const APPV = '2026-11-09.7';
+const APPV = '2026-11-09.9';
 const KEY = 'pay_save';
 
 // ---------- Catégories ----------
@@ -452,12 +452,10 @@ function goals(){
 
 function set(){
   return `
-  <div class="card"><h2>👫 Partage ${!SEC ? '' : syncOK === 'ok' ? 'actif ✅' : syncOK === 'err' ? '(pas de connexion) ⚠️' : ''}</h2>
-    ${SEC ? `<p class="help">Vos deux téléphones voient <b>exactement la même chose</b>, en direct. Vos chiffres sont <b>chiffrés</b> 🔐 : sans l'invitation, personne ne peut les lire.</p>
-    <button class="btn" style="width:100%;margin-bottom:10px" onclick="sendApp()">📤 Envoyer l'invitation à l'autre téléphone</button>
-    <p class="help">⚠️ À n'envoyer qu'à votre partenaire.</p>
-    <button class="btn alt small" onclick="spaceScreen()">📩 Rejoindre un autre espace</button>`
-    : `<p class="help">Pas encore d'espace partagé.</p><button class="btn" style="width:100%" onclick="spaceScreen()">🔐 Créer ou rejoindre notre espace</button>`}</div>
+  <div class="card"><h2>👫 Partage ${syncOK === 'ok' ? 'actif ✅' : syncOK === 'err' ? '(pas de connexion) ⚠️' : ''}</h2>
+    <p class="help">Les téléphones qui ont le même <b>mot de famille</b> voient <b>exactement le même budget</b>, en direct. Vos chiffres sont chiffrés 🔐 avec ce mot.</p>
+    <button class="btn" style="width:100%;margin-bottom:10px" onclick="sendApp()">📤 Envoyer le lien de l'appli</button>
+    <button class="btn alt small" onclick="famScreen()">🔐 Changer de mot de famille</button></div>
   <div class="card"><h2>🔒 Code d'accès</h2>
     ${pinH() ? `<p class="help">L'appli demande votre code à l'ouverture${bioId() ? ' (ou votre empreinte 👆)' : ''}.</p>
       <div class="btns" style="margin:0 0 10px"><button class="btn alt small" style="flex:1" onclick="pinSetup()">Changer le code</button><button class="btn alt small" style="flex:1" onclick="pinOff()">Enlever le code</button></div>
@@ -826,7 +824,15 @@ function whoSheet(){
 const FB = 'https://celine-fcdb2-default-rtdb.europe-west1.firebasedatabase.app';
 const OLD_URL = FB + '/familles/pay-bkc7j-rtopc-xzd3k-kwsk4.json'; // ancienne adresse non chiffrée (version du 09/11), vidée au passage
 const ALPHA = 'abcdefghjkmnpqrstuvwxyz23456789';
-let SEC = ''; try { SEC = localStorage.getItem('pay_secret') || ''; } catch(e) {}
+// Mot de famille : chacun le tape une fois. On n'enregistre jamais le mot lui-même, seulement une clé tirée de lui
+// (PBKDF2, `pay_fam`). Même mot = même espace. Le mot n'est écrit nulle part dans le code.
+let SEC = ''; try { SEC = localStorage.getItem('pay_fam') || ''; } catch(e) {}
+const normWord = w => String(w || '').normalize('NFD').replace(/[\u0300-\u036f]/g, '').toLowerCase().replace(/[^a-z0-9]/g, '');
+async function famKey(w){
+  const base = await crypto.subtle.importKey('raw', te.encode(normWord(w)), 'PBKDF2', false, ['deriveBits']);
+  const bits = await crypto.subtle.deriveBits({ name:'PBKDF2', hash:'SHA-256', salt: te.encode('payement-famille-v1'), iterations: 300000 }, base, 256);
+  return hex(new Uint8Array(bits));
+}
 let KEYC = null, PATH = '';
 const famURL = () => FB + '/familles/' + PATH + '.json';
 const te = new TextEncoder();
@@ -913,11 +919,10 @@ function startStream(){
 }
 // Invitation : lien + code, à n'envoyer qu'à son/sa partenaire.
 function sendApp(){
-  if (!SEC) return spaceScreen();
-  const u = location.origin + location.pathname + '#rejoindre=' + SEC;
-  const txt = '💶 Notre appli Payement : ouvre ce lien pour rejoindre notre budget 👇\n' + u + '\n\nSi on te demande le code : ' + prettySec(SEC);
+  const u = location.origin + location.pathname;
+  const txt = '💶 Notre appli Payement (factures, dépenses, épargne) : ' + u + '\nTape notre mot de famille à l\'ouverture 😉';
   if (navigator.share) navigator.share({ text: txt }).catch(() => {});
-  else (navigator.clipboard ? navigator.clipboard.writeText(txt) : Promise.reject()).then(() => toast('Invitation copiée 📋'), () => prompt('Copiez ce texte :', txt));
+  else (navigator.clipboard ? navigator.clipboard.writeText(u) : Promise.reject()).then(() => toast('Lien copié 📋'), () => prompt('Copiez ce lien :', u));
 }
 async function setSec(v){
   SEC = v; try { localStorage.setItem('pay_secret', v); } catch(e) {}
@@ -959,6 +964,34 @@ function spaceScreen(){
   document.getElementById('sp').classList.add('on');
 }
 function spaceDone(){ document.getElementById('sp').classList.remove('on'); onboard(); }
+function famScreen(){
+  document.getElementById('spc').innerHTML = `<h2>🔐 Votre mot de famille</h2>
+    <p>Tapez le mot que vous avez choisi à deux. <b>Le même sur vos deux téléphones</b> : vous verrez le même budget. Une seule fois suffit.</p>
+    <input id="famIn" class="codein" style="font-family:inherit" placeholder="Votre mot de famille" autocomplete="off" autocapitalize="off" type="password">
+    <button class="btn" id="famOk">Entrer</button>
+    <p class="help">Les majuscules et les espaces ne comptent pas.</p>`;
+  document.getElementById('sp').classList.add('on');
+  const go = async () => {
+    const w = document.getElementById('famIn').value;
+    if (normWord(w).length < 3) return toast('Tapez votre mot de famille');
+    const btn = document.getElementById('famOk'); btn.disabled = true; btn.textContent = '⏳ Un instant…';
+    try {
+      const k = await famKey(w);
+      // Ce que ce téléphone avait déjà (ancien espace, ancienne adresse) est gardé et rejoint le budget commun.
+      let old = ''; try { old = localStorage.getItem('pay_secret') || ''; } catch(e) {}
+      if (old) { SEC = old; await initKey(); try { const r = await fetch(famURL(), { cache:'no-store' }); if (r.ok) { const m = norm(await unseal(await r.json())); if (m) unpack(merge(pack(st), m)); } } catch(e) {} }
+      if (!localStorage.getItem('pay_old')) { await takeOld(); localStorage.setItem('pay_old', '1'); }
+      SEC = k; await initKey();
+      let empty = true;
+      try { const r = await fetch(famURL(), { cache:'no-store' }); if (r.ok) empty = !(await r.json()); } catch(e) {}
+      try { localStorage.setItem('pay_fam', k); localStorage.removeItem('pay_secret'); } catch(e) {}
+      startStream(); await sync(); render(); spaceDone();
+      toast(empty ? '✨ Nouveau budget créé. L\'autre téléphone doit taper exactement le même mot.' : '✅ Connecté : vous voyez le même budget');
+    } catch(e) { btn.disabled = false; btn.textContent = 'Entrer'; toast('❌ Problème, réessayez'); }
+  };
+  document.getElementById('famOk').onclick = go;
+  document.getElementById('famIn').onkeydown = e => { if (e.key === 'Enter') go(); };
+}
 setInterval(sync, 30000);
 
 // ---------- Installation sur l'écran d'accueil ----------
@@ -1005,7 +1038,7 @@ function hideIns(){ document.getElementById('ins').classList.remove('on'); onboa
 // Étapes du premier lancement, dans l'ordre : installer → espace privé → prénom → code d'accès.
 function onboard(){
   if (document.getElementById('ins').classList.contains('on') || document.getElementById('lock').classList.contains('on')) return;
-  if (!SEC) return spaceScreen();
+  if (!SEC) return famScreen();
   if (!me()) return setTimeout(whoSheet, 300);
 }
 function insLater(){ try { localStorage.setItem('pay_ins', Date.now()); } catch(e) {} hideIns(); }
@@ -1077,7 +1110,7 @@ function unlock(){ document.getElementById('lock').classList.remove('on'); pinBu
 function pinCancel(){ document.getElementById('lock').classList.remove('on'); pinBuf = ''; render(); }
 function pinOff(){ if (!confirm('Enlever le code d\'accès sur ce téléphone ?')) return; try { localStorage.removeItem('pay_pin'); localStorage.removeItem('pay_bio'); } catch(e) {} render(); toast('Code enlevé'); }
 function pinForgot(){
-  if (!confirm('Code oublié ? Ce téléphone va être remis à zéro.\n\nVos chiffres restent en sécurité en ligne : il suffira de recoller l\'invitation (le message envoyé à votre partenaire, ou demandez-lui de vous la renvoyer depuis ⚙️ Réglages).')) return;
+  if (!confirm('Code oublié ? Ce téléphone va être remis à zéro.\n\nVos chiffres restent en sécurité en ligne : il suffira de retaper votre mot de famille.')) return;
   try { Object.keys(localStorage).filter(k => k.startsWith('pay_')).forEach(k => localStorage.removeItem(k)); } catch(e) {}
   location.reload();
 }
@@ -1112,11 +1145,10 @@ function readInvite(){
 }
 
 (async () => {
-  const inv = readInvite();
+  readInvite();
   if (pinH()) lockScreen();
   render();
   await initKey();
-  if (inv && cleanSec(inv) !== SEC) { if (!SEC) await joinSpace(inv); else { spaceScreen(); document.getElementById('joinIn').value = inv; } }
   setSy(''); startStream(); sync(); chkUpd();
   if (!showIns()) onboard();
 })();
