@@ -142,10 +142,11 @@ header h1{display:flex;align-items:center;gap:8px}
 <div id="ins"><div id="insc"></div><button class="later" onclick="insLater()">Plus tard</button></div>
 <div id="sp"><div id="spc"></div></div>
 <div id="lock"></div>
+<input type="file" id="slipIn" accept="image/*" hidden>
 
 <script>
 'use strict';
-const APPV = '2026-11-09.3';
+const APPV = '2026-11-09.4';
 const KEY = 'pay_save';
 
 // ---------- Catégories ----------
@@ -206,7 +207,10 @@ function due(b, m){
 }
 const billsOf = m => st.bills.filter(b => due(b, m)).sort((a, b) => (a.day || 0) - (b.day || 0));
 const isPaid = (b, m) => !!(st.paid[m + '_' + b.id] || {}).v;
-const incOf = m => st.inc.filter(i => mi(m) >= mi(i.start) && !(i.end && mi(m) > mi(i.end)));
+const incAll = m => st.inc.filter(i => mi(m) >= mi(i.start) && !(i.end && mi(m) > mi(i.end)));
+// Une rentrée avec `rep` (ex : fiche de paye) remplace ce mois-là le salaire habituel `rep`.
+const replOf = m => new Set(st.mv.filter(v => v.rep && v.d.slice(0, 7) === m).map(v => v.rep));
+const incOf = m => { const r = replOf(m); return incAll(m).filter(i => !r.has(i.id)); };
 const mvOf = m => st.mv.filter(v => v.d.slice(0, 7) === m).sort((a, b) => b.d.localeCompare(a.d));
 const depOf = m => st.dep.filter(v => v.d.slice(0, 7) === m);
 const goalSaved = g => st.dep.filter(d => d.g === g.id).reduce((s, d) => s + d.amt, 0);
@@ -266,6 +270,7 @@ function home(){
     <button class="btn in" data-act="addMv" data-t="in">＋ Rentrée</button>
     <button class="btn out" data-act="addMv" data-t="out">－ Dépense</button>
   </div>
+  <div class="btns"><button class="btn alt" data-act="slip">📄 Ajouter une fiche de paye</button></div>
   ${t.nb ? `<div class="card"><h2>🧾 Factures payées : ${t.nbPaid} / ${t.nb}</h2>
     <div class="bar g"><i style="width:${t.nb ? t.nbPaid / t.nb * 100 : 0}%"></i></div>
     <div class="sub mute">${eur(t.billsPaid)} payé · ${eur(t.bills - t.billsPaid)} encore à payer</div>
@@ -315,21 +320,23 @@ function nextDue(b){
 }
 
 function mv(){
-  const inc = incOf(cur), list = mvOf(cur), t = totals(cur);
+  const inc = incAll(cur), rp = replOf(cur), list = mvOf(cur), t = totals(cur);
   return `
   <div class="btns">
     <button class="btn in" data-act="addMv" data-t="in">＋ Rentrée</button>
     <button class="btn out" data-act="addMv" data-t="out">－ Dépense</button>
   </div>
+  <div class="btns"><button class="btn alt" data-act="slip">📄 Ajouter une fiche de paye</button></div>
   <div class="card"><h2>💼 Rentrées chaque mois</h2>
     <p class="help">Salaires, allocations… comptés automatiquement tous les mois.</p>
-    ${inc.map(i => `<div class="row tap" data-act="editInc" data-id="${i.id}"><div class="l"><div class="ico">${ico(CATS_IN, i.c)}</div>
-      <div class="nm">${esc(i.nm)}</div></div><span class="amt in">+${eur(i.amt)}</span></div>`).join('') || '<div class="empty">Pas encore de salaire ajouté.</div>'}
+    ${inc.map(i => `<div class="row tap ${rp.has(i.id) ? 'done' : ''}" data-act="editInc" data-id="${i.id}"><div class="l"><div class="ico">${ico(CATS_IN, i.c)}</div>
+      <div style="min-width:0"><div class="nm">${esc(i.nm)}</div>${rp.has(i.id) ? '<div class="sub">remplacé ce mois-ci par la fiche de paye 📄</div>' : ''}</div></div>
+      <span class="amt ${rp.has(i.id) ? 'mute' : 'in'}">+${eur(i.amt)}</span></div>`).join('') || '<div class="empty">Pas encore de salaire ajouté.</div>'}
     <button class="btn alt small" data-act="addInc" style="margin-top:8px">＋ Ajouter un salaire</button>
   </div>
   <div class="card"><h2>📋 Ce mois-ci</h2>
     ${list.map(v => `<div class="row tap" data-act="editMv" data-id="${v.id}"><div class="l"><div class="ico">${ico(v.t === 'in' ? CATS_IN : CATS_OUT, v.c)}</div>
-      <div style="min-width:0"><div class="nm">${esc(v.nm || catName(v.t === 'in' ? CATS_IN : CATS_OUT, v.c))}</div><div class="sub">${dShort(v.d)}${v.who ? ' · ' + esc(v.who) : ''}</div></div></div>
+      <div style="min-width:0"><div class="nm">${esc(v.nm || catName(v.t === 'in' ? CATS_IN : CATS_OUT, v.c))}</div><div class="sub">${v.slip ? '📄 ' : ''}${dShort(v.d)}${v.who ? ' · ' + esc(v.who) : ''}${v.rep && byId(st.inc, v.rep) ? ' · remplace « ' + esc(byId(st.inc, v.rep).nm) + ' »' : ''}</div></div></div>
       <span class="amt ${v.t}">${v.t === 'in' ? '+' : '−'}${eur(v.amt)}</span></div>`).join('') || '<div class="empty">Rien d\'ajouté ce mois-ci.</div>'}
     <div class="row"><span>Rentrées du mois</span><span class="amt in">+${eur(t.inc)}</span></div>
     <div class="row"><span>Dépenses du mois</span><span class="amt out">−${eur(t.out)}</span></div>
@@ -463,10 +470,12 @@ function mvForm(m, t){
     { k:'nm', l:'Détail (facultatif)', p: m.t === 'in' ? 'ex : prime, remboursement…' : 'ex : Delhaize, essence…' },
     { k:'d', l:'Date', t:'date' },
     { k:'who', l:'Qui ? (facultatif)', p:'ex : Nico' }
-  ], m, v => {
+  ].concat(m.t === 'in' && st.inc.length ? [{ k:'rep', l:'Remplace un salaire habituel ce mois-là ?', t:'sel', o:[['', 'Non, c\'est en plus']].concat(st.inc.map(i => [i.id, 'Oui : ' + i.nm])) }] : []),
+  m, v => {
     const amt = needAmt(v.amt); if (amt == null) return;
     if (!/^\d{4}-\d\d-\d\d$/.test(v.d)) return toast('Choisissez une date');
     touch(Object.assign(m, { amt, c: v.c, nm: v.nm, d: v.d, who: v.who }));
+    if ('rep' in v) m.rep = v.rep;
     if (isNew) { m.id = uid(); st.mv.push(m); }
     if (v.d.slice(0, 7) !== cur) { cur = v.d.slice(0, 7); }
     return true;
@@ -500,6 +509,86 @@ function depForm(g, sign){
   });
 }
 
+// ---------- Fiche de paye : lecture de l'image sur le téléphone (Tesseract.js), rien n'est envoyé ----------
+const TESS = 'https://cdn.jsdelivr.net/npm/tesseract.js@5.1.1/dist/tesseract.min.js';
+const MOIS = ['janvier','février','mars','avril','mai','juin','juillet','août','septembre','octobre','novembre','décembre'];
+const MAAND = ['januari','februari','maart','april','mei','juni','juli','augustus','september','oktober','november','december'];
+function loadTess(){
+  if (window.Tesseract) return Promise.resolve();
+  return new Promise((ok, ko) => { const sc = document.createElement('script'); sc.src = TESS; sc.onload = ok; sc.onerror = ko; document.head.appendChild(sc); });
+}
+function slipProgress(t, pc){
+  document.getElementById('sheet').innerHTML = `<h3>📄 Lecture de la fiche de paye…</h3><p class="help">${t}</p>
+    <div class="bar"><i style="width:${Math.round(pc * 100)}%"></i></div>
+    <p class="help">La fiche reste sur votre téléphone : elle n'est envoyée nulle part.</p>`;
+  document.getElementById('modal').classList.add('on'); formDone = { busy: 1 };
+}
+// Montants au format belge/français : 2.345,67 · 2 345,67 · 2345,67 (accepte aussi le point décimal).
+function amounts(line){
+  const out = [], re = /(\d{1,3}(?:[ .'\u00a0\u202f]\d{3})+|\d+)\s?[,.]\s?(\d{2})(?![\d])/g; let x;
+  while ((x = re.exec(line))) { const v = +(x[1].replace(/[^\d]/g, '') + '.' + x[2]); if (v >= 50 && v < 30000) out.push(v); }
+  return out;
+}
+function parseSlip(text){
+  const L = text.split(/\n/).map(l => l.trim()).filter(Boolean);
+  const KW = [[/net\s*[àa@]\s*pay|net\s*[àa@]\s*vir|montant\s*[àa@]\s*vir|[àa@]\s*virer|netto\s*te\s*betalen|te\s*betalen|uit\s*te\s*betalen/i, 3],
+    [/salaire\s*net|r[ée]mun[ée]ration\s*nette|montant\s*net|nettoloon|netto\s*bedrag|net\s*pay/i, 2], [/\bnet\b|\bnetto\b/i, 1]];
+  const bad = /imposable|belastbaar|brut|bruto|cumul|ann[ée]e/i;
+  let best = null; const all = new Map();
+  L.forEach((l, i) => {
+    amounts(l).forEach(v => all.set(v, (all.get(v) || 0) + 1));
+    const k = KW.find(k => k[0].test(l)); if (!k) return;
+    if (bad.test(l) && k[1] < 3) return;
+    let a = amounts(l); if (!a.length && L[i + 1]) a = amounts(L[i + 1]);
+    if (!a.length) return;
+    const c = { v: a[a.length - 1], sc: k[1], i };
+    if (!best || c.sc > best.sc || (c.sc === best.sc && c.i > best.i)) best = c;
+  });
+  // Mois de la fiche
+  let month = '';
+  const low = text.toLowerCase();
+  const m1 = low.match(new RegExp('(' + MOIS.concat(MAAND).join('|') + ')\\s+(20\\d\\d)'));
+  if (m1) { let k = MOIS.indexOf(m1[1]); if (k < 0) k = MAAND.indexOf(m1[1]); month = m1[2] + '-' + pad(k + 1); }
+  else { const m2 = low.match(/\b(0[1-9]|1[0-2])\s*[\/.-]\s*(20\d\d)\b/); if (m2) month = m2[2] + '-' + m2[1]; }
+  const others = [...all.keys()].filter(v => !best || v !== best.v).sort((a, b) => b - a).slice(0, 8);
+  return { amt: best ? best.v : null, month, others };
+}
+async function readSlip(file){
+  slipProgress('Préparation…', 0.02);
+  try {
+    await loadTess();
+    const worker = await Tesseract.createWorker('fra', 1, { logger: m => {
+      if (m.status === 'recognizing text') slipProgress('Lecture du texte…', 0.3 + m.progress * 0.7);
+      else if (/load|download/i.test(m.status)) slipProgress('Préparation (la première fois, ça peut prendre un peu de temps)…', 0.05 + (m.progress || 0) * 0.25);
+    } });
+    const { data } = await worker.recognize(file);
+    await worker.terminate();
+    formDone = null; slipForm(parseSlip(data.text || ''));
+  } catch(e) { formDone = null; closeM(); toast('❌ Impossible de lire l\'image (connexion ?)'); }
+}
+function slipForm(r){
+  const month = r.month && Math.abs(mi(r.month) - mi(thisMonth)) <= 13 ? r.month : cur;
+  const mine = me().toLowerCase(), used = replOf(month);
+  const guess = (st.inc.find(i => mine && i.nm.toLowerCase().includes(mine)) || (st.inc.filter(i => !used.has(i.id)).length === 1 ? st.inc.find(i => !used.has(i.id)) : null) || {}).id || '';
+  form(r.amt ? '📄 Fiche de paye lue ✅' : '📄 Montant pas trouvé', [
+    { k:'amt', l: r.amt ? 'Net à payer trouvé (vérifiez-le)' : 'Tapez le « Net à payer »', t:'num', p:'0,00' },
+    { k:'month', l:'Mois de la fiche de paye', t:'sel', o:monthOpts() },
+    { k:'nm', l:'Nom', p:'ex : Salaire de Nico' },
+    { k:'rep', l:'Remplace le salaire habituel ce mois-là ?', t:'sel', o:[['', st.inc.length ? 'Non, c\'est en plus' : '—']].concat(st.inc.map(i => [i.id, 'Oui : ' + i.nm])) }
+  ], { amt: r.amt || '', month, nm: 'Salaire' + (me() ? ' de ' + me() : ''), rep: guess }, v => {
+    const amt = needAmt(v.amt); if (amt == null) return;
+    st.mv.push(touch({ id: uid(), t:'in', c:'salaire', amt, nm: v.nm || 'Salaire', d: v.month === thisMonth ? today : v.month + '-01', who: me(), rep: v.rep, slip: 1 }));
+    cur = v.month; tab = 'mv';
+    return true;
+  });
+  if (r.others.length) {
+    const f = document.querySelector('#sheet .f');
+    f.insertAdjacentHTML('afterend', `<div class="f"><label>Autres montants vus sur la fiche (touchez pour choisir)</label><div class="chips">${r.others.map(v =>
+      `<button type="button" onclick="document.querySelector('#sheet [data-k=amt]').value='${String(v).replace('.', ',')}'">${eur(v)}</button>`).join('')}</div></div>`);
+  }
+}
+document.getElementById('slipIn').addEventListener('change', e => { const f = e.target.files[0]; e.target.value = ''; if (f) readSlip(f); });
+
 // ---------- Actions ----------
 const byId = (a, id) => a.find(x => x.id === id);
 document.addEventListener('click', e => {
@@ -523,6 +612,7 @@ document.addEventListener('click', e => {
     case 'addInc': incForm(); break;
     case 'editInc': incForm(byId(st.inc, id)); break;
     case 'addMv': mvForm(null, el.dataset.t); break;
+    case 'slip': document.getElementById('slipIn').click(); break;
     case 'editMv': mvForm(byId(st.mv, id)); break;
     case 'addGoal': goalForm(); break;
     case 'editGoal': goalForm(byId(st.goals, id)); break;

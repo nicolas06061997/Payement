@@ -39,3 +39,10 @@ Test : Playwright + CDP `WebAuthn.addVirtualAuthenticator`.
 Écran `#ins` (`showIns`/`insHTML`, comme Céline : WhatsApp/Messenger → Safari/Chrome, étapes iPhone/Android), « Plus tard » = 24 h (`pay_ins`).
 `chkUpd()` : nouvelle version → rechargement automatique (une fois par version, `pay_auto`), sinon bandeau `#upd` « Mettre à jour ». Vérifié au retour dans l'appli et toutes les 30 min.
 `sw.js?v=APPV` (caches `pay-…`).
+
+## Fiche de paye (capture d'écran → salaire du mois)
+Bouton 📄 (`data-act=slip`, `#slipIn`) → `readSlip()` : Tesseract.js 5.1.1 chargé à la demande depuis jsdelivr (`loadTess`), langue `fra`, tout se passe sur le téléphone.
+`parseSlip()` cherche « Net à payer / à virer / te betalen… » (sinon « net »), ignore « imposable/brut », trouve le mois (`MOIS`/`MAAND` ou MM/AAAA).
+`slipForm()` : montant à vérifier + autres montants en boutons ; enregistre une rentrée `{c:'salaire', slip:1, rep:idSalaire}`.
+`rep` = ce mois-là, le salaire habituel est remplacé (`replOf`, `incOf` ; `incAll` = tous). Aussi réglable dans `mvForm` pour toute rentrée.
+Test : servir `tesseract.js`, `tesseract.js-core`, `@tesseract.js-data/fra` depuis node_modules via `page.route`.
