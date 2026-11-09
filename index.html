@@ -193,7 +193,7 @@ p.help{color:var(--mute);font-size:14px;margin:2px 0 10px}
 
 <script>
 'use strict';
-const APPV = '2026-11-09.6';
+const APPV = '2026-11-09.7';
 const KEY = 'pay_save';
 
 // ---------- Catégories ----------
@@ -834,7 +834,12 @@ const sha = async t => new Uint8Array(await crypto.subtle.digest('SHA-256', te.e
 const hex = a => Array.from(a, b => b.toString(16).padStart(2, '0')).join('');
 const b64 = a => { let t = ''; a.forEach(b => t += String.fromCharCode(b)); return btoa(t); };
 const unb64 = t => Uint8Array.from(atob(t), c => c.charCodeAt(0));
-const cleanSec = t => String(t || '').toLowerCase().replace(/.*rejoindre=/, '').replace(/[^a-z0-9]/g, '');
+// Accepte le code seul, le lien, ou tout le message d'invitation collé d'un coup.
+function cleanSec(t){
+  t = String(t || '').toLowerCase();
+  const m = t.match(/rejoindre=([a-z0-9]{26})/) || t.match(/\b((?:[a-z0-9]{4}[\s-]){6}[a-z0-9]{2})\b/);
+  return (m ? m[1] : t).replace(/[^a-z0-9]/g, '');
+}
 const prettySec = t => t.match(/.{1,4}/g).join('-');
 function newSec(){ const r = crypto.getRandomValues(new Uint8Array(26)); return Array.from(r, b => ALPHA[b % ALPHA.length]).join(''); }
 async function initKey(){
