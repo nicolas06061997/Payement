@@ -1,7 +1,7 @@
 # Payement
 
 Appli mobile (PWA) de budget pour un couple : factures de chaque mois, rentrées, dépenses, objectifs d'épargne (mariage, gros achat…).
-Un seul fichier `index.html`, publié par GitHub Pages depuis `main` : https://nicolas06061997.github.io/payement/
+Un seul fichier `index.html`, publié par GitHub Pages depuis `main` : https://nicolas06061997.github.io/Payement/
 Projet indépendant des jeux du dépôt La-Fine-Crasse.
 
 L'utilisateur parle français et n'est pas développeur : réponses courtes, en français, étape par étape.
