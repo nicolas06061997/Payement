@@ -55,3 +55,8 @@ Test : servir `tesseract.js`, `tesseract.js-core`, `@tesseract.js-data/fra` depu
 
 ## Look (refait le 09/11 : « plus propre et jolie »)
 Police Plus Jakarta Sans (Google Fonts), couleurs dans `:root` (clair/sombre), icônes SVG `ICONS`/`svg()`, carte principale `.hero` (`.hero.blue` pour l'épargne), actions rapides `.qa`, titres de section `.sec`, montants `eurH()` (centimes plus petits). Vérifier par capture d'écran après un changement visuel.
+
+## Facture en photo / capture
+Bouton Facture de l'accueil → `billChoice()` (photo ou à la main) ; onglet Factures : « 📷 Avec une photo » (`#billIn`).
+`ocrText(file, quoi)` (Tesseract, partagé avec la fiche de paye) → `parseBill()` : fournisseur (`PROV` : nom + catégorie, sinon 1re ligne), montant (« montant à payer / total à payer / à payer », sinon « total TVAC »), échéance (« avant le / échéance… »), communication structurée +++…+++, IBAN BE.
+Préremplit `billForm(null, pre)` en « une seule fois » au mois de l'échéance ; champs `com`/`iban` sur toutes les factures, boutons 📋 pour les copier (`data-act=copy2`).
