@@ -46,3 +46,10 @@ Bouton 📄 (`data-act=slip`, `#slipIn`) → `readSlip()` : Tesseract.js 5.1.1 c
 `slipForm()` : montant à vérifier + autres montants en boutons ; enregistre une rentrée `{c:'salaire', slip:1, rep:idSalaire}`.
 `rep` = ce mois-là, le salaire habituel est remplacé (`replOf`, `incOf` ; `incAll` = tous). Aussi réglable dans `mvForm` pour toute rentrée.
 Test : servir `tesseract.js`, `tesseract.js-core`, `@tesseract.js-data/fra` depuis node_modules via `page.route`.
+
+## Factures et épargne (09/11)
+- `FREQ` : 1 = chaque mois (revient tout seul), 0 = une seule fois, 2/3/6/12. « Arrêter à partir de ce mois » (`stopBill`) met `end` au mois précédent ; « Supprimer complètement » efface aussi le passé. Ajout rapide `QUICK` (`data-act=quick`).
+- Comptes épargne `st.acc` ({nm,init,i}) : solde `accBal` = init + `dep` avec `acc` ; `accMvForm` (verser/retirer), `accFix` (correction `adj:1`, pas comptée dans « mis de côté »). Un versement pour un objectif peut aller sur un compte (`dep.g` + `dep.acc`). Total `totSav()`.
+
+## Look (refait le 09/11 : « plus propre et jolie »)
+Police Plus Jakarta Sans (Google Fonts), couleurs dans `:root` (clair/sombre), icônes SVG `ICONS`/`svg()`, carte principale `.hero` (`.hero.blue` pour l'épargne), actions rapides `.qa`, titres de section `.sec`, montants `eurH()` (centimes plus petits). Vérifier par capture d'écran après un changement visuel.
