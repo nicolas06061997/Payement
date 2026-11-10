@@ -71,3 +71,5 @@ Préremplit `billForm(null, pre)` en « une seule fois » au mois de l'échéanc
 `html[data-theme]` : `a` Nuit violette (toujours sombre, anneau `donut()`, barre du bas flottante), `b` Coloré (Nunito, tuiles `.tiles`), `c` Chic doré (Playfair, carte noire et or), vide = Simple.
 `pay_theme` (local, aussi dans le profil `th`) ; `applyTheme`/`setTheme`/`themePicker` (Réglages) ; `themeSheet()` proposé une fois (`pay_thc`). Jamais partagé dans les données du budget.
 Polices Google : Plus Jakarta Sans, Outfit, Nunito, Playfair Display. Test sans réseau : servir @fontsource via `page.route`.
+- 10/11 : carte `.hero` en haut de chaque page (Factures : reste à payer ; Argent : rentrées − dépenses, actions rondes `.qa`) ; la carte de l'accueil a la classe `home` (anneau A, tuiles B). Chic doré : boutons noir/or, icônes `.ico` sépia sans fond, petits dessins retirés des titres dans `render()`.
+- Manifeste en `fullscreen` (comme Céline) : plus de barre de couleur en bas sur Android. Un téléphone déjà installé garde l'ancienne couleur jusqu'à la mise à jour de Chrome ou une réinstallation.

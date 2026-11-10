@@ -187,10 +187,11 @@ html[data-theme=a] body{background:radial-gradient(120% 50% at 85% -5%,#3b1d6e,t
 [data-theme=a] .hero{background:linear-gradient(145deg,rgba(255,255,255,.13),rgba(255,255,255,.03));border:1px solid rgba(255,255,255,.14);box-shadow:0 20px 50px rgba(139,92,246,.28)}
 [data-theme=a] .hero::before,[data-theme=a] .hero::after{display:none}
 [data-theme=a] .hero .lbl{color:#c4b5fd}
-[data-theme=a] .hero .val{font-size:38px;background:linear-gradient(90deg,#fff,#f0abfc);-webkit-background-clip:text;background-clip:text;color:transparent;padding-right:96px}
-[data-theme=a] .hero .note{color:#a39bc4;padding-right:96px}
+[data-theme=a] .hero .val{font-size:38px;background:linear-gradient(90deg,#fff,#f0abfc);-webkit-background-clip:text;background-clip:text;color:transparent}
+[data-theme=a] .hero.home .val,[data-theme=a] .hero.home .note{padding-right:96px}
+[data-theme=a] .hero .note{color:#a39bc4}
 [data-theme=a] .donut{display:block;position:absolute;right:18px;top:20px;width:88px;height:88px}
-[data-theme=a] .hbar2{display:none}[data-theme=a] .hst{margin-top:16px}
+[data-theme=a] .hero.home .hbar2{display:none}[data-theme=a] .hst{margin-top:16px}
 [data-theme=a] .hst div{background:rgba(255,255,255,.06);border:1px solid rgba(255,255,255,.08)}
 [data-theme=a] .hst div:nth-child(1) b{color:#6ee7b7}[data-theme=a] .hst div:nth-child(2) b{color:#fda4af}[data-theme=a] .hst div:nth-child(3) b{color:#c4b5fd}
 [data-theme=a] .qa .c{border:0;color:#fff}
@@ -210,8 +211,8 @@ html[data-theme=b],html[data-theme=b] body{background:#fff8f1;font-family:Nunito
 [data-theme=b] .amt,[data-theme=b] .nm,[data-theme=b] h2,[data-theme=b] .btn{font-weight:800}
 [data-theme=b] .hero{box-shadow:0 18px 36px rgba(255,95,143,.35);border-radius:30px}
 [data-theme=b] .hero::before{display:none}
-[data-theme=b] .hero::after{content:"💸";background:none;width:auto;height:auto;left:auto;bottom:auto;right:14px;top:8px;font-size:58px;transform:rotate(12deg)}
-[data-theme=b] .hst{display:none}
+[data-theme=b] .hero.home::after{content:"💸";background:none;width:auto;height:auto;left:auto;bottom:auto;right:14px;top:8px;font-size:58px;transform:rotate(12deg)}
+[data-theme=b] .hero.home .hst{display:none}
 [data-theme=b] .hbar2{height:12px;margin-bottom:4px}
 [data-theme=b] .tiles{display:grid;grid-template-columns:1fr 1fr;gap:12px;margin:0 0 16px}
 .tiles .t{border-radius:24px;padding:14px 16px;color:#2b2233}.tiles .em{font-size:28px;line-height:1}.tiles small{display:block;font-weight:700;font-size:13px;opacity:.7;margin-top:6px}.tiles b{font-size:21px;font-weight:800;letter-spacing:-.3px}
@@ -249,6 +250,35 @@ html[data-theme=c],html[data-theme=c] body{background:#f6f1e9}
 .thm .pv{height:58px;border-radius:12px;margin-bottom:8px;position:relative;overflow:hidden}
 .thm .pv i{position:absolute;left:8px;right:8px;top:8px;height:24px;border-radius:8px}
 .thm b{font-size:14px}.thm small{display:block;color:var(--mute);font-size:12px}
+
+/* Chic doré : partout */
+[data-theme=c] .btn{background:#1d1a16;color:#f0dfb8;border-radius:14px;letter-spacing:.2px}
+[data-theme=c] .btn.in{background:#1d1a16;color:#f0dfb8}
+[data-theme=c] .btn.out{background:transparent;color:#1d1a16;border:1.5px solid #1d1a16}
+[data-theme=c] .btn.alt,[data-theme=c] .card .btn.alt{background:transparent;color:var(--ink);border:1px solid #d9cdb8}
+[data-theme=c] .btn[style*="--sav"]{background:#1d1a16!important;color:#f0dfb8}
+[data-theme=c] .chips button{background:transparent;border:1px solid #d9cdb8;color:var(--ink)}
+[data-theme=c] .chips button.on{background:#1d1a16;border-color:#1d1a16;color:#f0dfb8}
+[data-theme=c] .card h2{font-size:19px}
+[data-theme=c] .ico{background:transparent;border:1px solid #e3d6bf;filter:grayscale(1) sepia(.6) saturate(1.3)}
+[data-theme=c] .hbar2 i:first-child{background:#c9a45c!important}
+.btn.small{white-space:nowrap}
+[data-theme=c] .row{border-bottom-color:#efe6d6}
+[data-theme=c] .amt.in,[data-theme=c] .in{color:#3f6b4f}[data-theme=c] .amt.out,[data-theme=c] .out{color:#9c3d33}[data-theme=c] .sav{color:#8a6a2a}
+[data-theme=c] .hero .note{color:#cdbf9f}
+[data-theme=c] .hero .hst b{color:#f6efe2}
+[data-theme=c] .hero.blue{background:linear-gradient(135deg,#1c1a17,#2e2a24)}
+[data-theme=c] .sheet{background:#fffaf2}
+[data-theme=c] .sheet::before{background:#d9cdb8}
+[data-theme=c] .f input,[data-theme=c] .f select{background:#f6f1e9;border-color:#e3d6bf}
+[data-theme=c] .f input:focus,[data-theme=c] .f select:focus{border-color:#a8843f}
+[data-theme=c] .del{color:#9c3d33}
+[data-theme=c] #upd{background:#1d1a16;color:#f6efe2}[data-theme=c] #upd button{background:#c9a45c;color:#1d1a16}
+[data-theme=c] #toast{background:#1d1a16;color:#f0dfb8}
+[data-theme=c] .stepn{background:#f1e8d8;color:#8a6a2a}[data-theme=c] .stepn.ok{background:#1d1a16;color:#c9a45c}
+[data-theme=c] .sec button,[data-theme=c] .sec a{color:#a8843f}
+[data-theme=c] .bar{background:#ece2d1}
+[data-theme=c] .thm button.on{border-color:#a8843f}
 </style>
 </head>
 <body>
@@ -270,7 +300,7 @@ html[data-theme=c],html[data-theme=c] body{background:#f6f1e9}
 
 <script>
 'use strict';
-const APPV = '2026-11-10.2';
+const APPV = '2026-11-10.4';
 const KEY = 'pay_save';
 
 // ---------- Catégories ----------
@@ -379,6 +409,9 @@ function render(){
   document.getElementById('nav').innerHTML = TABS.map(t =>
     `<button class="${tab === t[0] ? 'on' : ''}" data-tab="${t[0]}"><span class="p">${svg(t[1])}</span>${t[2]}</button>`).join('');
   document.getElementById('main').innerHTML = ({ home, bills, mv, goals, set })[tab]();
+  if (curTheme() === 'c') document.querySelectorAll('#main .card h2, #main .sec h3').forEach(h => {
+    const n = h.firstChild; if (n && n.nodeType === 3) n.textContent = n.textContent.replace(/^[\p{Extended_Pictographic}\uFE0F\u200d\s]+/u, '');
+  });
   const bb = document.getElementById('bioBtn'); if (bb) bioAvail().then(ok => { if (ok) bb.style.display = ''; });
 }
 
@@ -428,7 +461,7 @@ function home(){
   const steps = [[st.inc.length || st.mv.some(v => v.t === 'in'), 'Ajoutez vos salaires', 'mv'], [st.bills.length, 'Ajoutez vos factures du mois', 'bills'], [st.acc.length || st.goals.length, 'Ajoutez votre épargne', 'goals']];
   const sorties = t.bills + t.out, base = Math.max(t.inc, sorties + t.sav, 1);
   return `
-  <div class="hero">
+  <div class="hero home">
     ${donut(t)}
     <div class="lbl">Il reste pour ${esc(mName(cur))}</div>
     <div class="val">${eurH(t.rest)}</div>
@@ -490,13 +523,17 @@ function bills(){
   const bl = billsOf(cur), t = totals(cur);
   const other = st.bills.filter(b => !due(b, cur));
   return `
-  <div class="card"><h2>🧾 À payer en ${esc(mName(cur))}</h2>
-    <p class="help">Cochez ✓ quand une facture est payée. Les factures ↻ reviennent toutes seules chaque mois. Touchez une facture pour la changer ou l'arrêter.</p>
-    ${bl.length ? `<div class="bar g"><i style="width:${t.nbPaid / t.nb * 100}%"></i></div>
-      <div class="sub mute">${t.nbPaid} / ${t.nb} payées · reste ${eur(t.bills - t.billsPaid)}</div>` : ''}
+  <div class="hero">
+    <div class="lbl">Encore à payer en ${esc(mName(cur))}</div>
+    <div class="val">${eurH(t.bills - t.billsPaid)}</div>
+    <div class="note">${t.nb ? `${t.nbPaid} sur ${t.nb} factures payées · total ${eur(t.bills)}` : 'Aucune facture ce mois-ci'}</div>
+    <div class="hbar2"><i style="width:${t.nb ? t.nbPaid / t.nb * 100 : 0}%;background:rgba(255,255,255,.95)"></i></div>
+  </div>
+  <div class="card">
     ${bl.map(billRow).join('') || '<div class="empty">Aucune facture pour ce mois.</div>'}
     <div class="row"><b>Total</b><span class="amt out">${eur(t.bills)}</span></div>
   </div>
+  <p class="help" style="margin:-4px 6px 14px">Cochez ✓ quand une facture est payée. Les factures ↻ reviennent toutes seules chaque mois. Touchez une facture pour la changer ou l'arrêter.</p>
   <div class="card"><h2>⚡ Ajouter vite</h2>
     <div class="chips">${QUICK.map((q, i) => `<button data-act="quick" data-i="${i}">${ico(CATS_BILL, q[1])} ${q[0]}</button>`).join('')}</div>
     <div class="btns" style="margin:12px 0 0"><button class="btn" data-act="billPhoto">📷 Avec une photo</button><button class="btn alt" data-act="addBill">✏️ Autre facture</button></div></div>
@@ -514,11 +551,20 @@ function nextDue(b){
 function mv(){
   const inc = incAll(cur), rp = replOf(cur), list = mvOf(cur), t = totals(cur);
   return `
-  <div class="btns">
-    <button class="btn in" data-act="addMv" data-t="in">＋ Rentrée</button>
-    <button class="btn out" data-act="addMv" data-t="out">－ Dépense</button>
+  <div class="hero">
+    <div class="lbl">Argent de ${esc(mName(cur))}</div>
+    <div class="val">${eurH(t.inc - t.out)}</div>
+    <div class="note">rentrées moins dépenses du mois (sans les factures)</div>
+    <div class="hst" style="grid-template-columns:1fr 1fr;margin-top:16px">
+      <div><span>Rentrées</span><b>${eur(t.inc)}</b></div>
+      <div><span>Dépenses</span><b>${eur(t.out)}</b></div>
+    </div>
   </div>
-  <div class="btns"><button class="btn alt" data-act="slip">📄 Ajouter une fiche de paye</button></div>
+  <div class="qa" style="grid-template-columns:repeat(3,1fr);margin-bottom:16px">
+    <button data-act="addMv" data-t="in"><span class="c g">${svg('plus')}</span>Rentrée</button>
+    <button data-act="addMv" data-t="out"><span class="c r">${svg('minus')}</span>Dépense</button>
+    <button data-act="slip"><span class="c b">${svg('doc')}</span>Fiche de paye</button>
+  </div>
   <div class="card"><h2>💼 Rentrées chaque mois</h2>
     <p class="help">Salaires, allocations… comptés automatiquement tous les mois.</p>
     ${inc.map(i => `<div class="row tap ${rp.has(i.id) ? 'done' : ''}" data-act="editInc" data-id="${i.id}"><div class="l"><div class="ico">${ico(CATS_IN, i.c)}</div>
@@ -572,6 +618,7 @@ function goals(){
 
 function set(){
   return `
+  <div class="sec" style="margin-top:8px"><h3>Réglages</h3></div>
   <div class="card"><h2>👫 Partage ${syncOK === 'ok' ? 'actif ✅' : syncOK === 'err' ? '(pas de connexion) ⚠️' : ''}</h2>
     <p class="help">Les téléphones qui ont le même <b>mot de famille</b> voient <b>exactement le même budget</b>, en direct. Vos chiffres sont chiffrés 🔐 avec ce mot.</p>
     <button class="btn" style="width:100%;margin-bottom:10px" onclick="sendApp()">📤 Envoyer le lien de l'appli</button>
