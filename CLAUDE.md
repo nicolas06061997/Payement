@@ -66,3 +66,8 @@ Préremplit `billForm(null, pre)` en « une seule fois » au mois de l'échéanc
 `profSave()` après chaque changement de prénom, code ou empreinte ; créé tout seul au démarrage si absent.
 `whoSheet()` propose les prénoms existants → `useProf()` remet prénom, code et empreinte, puis demande le code pour confirmer.
 « Code oublié » retire le code du profil (puis `sync`) avant d'effacer le téléphone. `navigator.storage.persist()` au démarrage.
+
+## Styles au choix (10/11) — propres à chaque téléphone
+`html[data-theme]` : `a` Nuit violette (toujours sombre, anneau `donut()`, barre du bas flottante), `b` Coloré (Nunito, tuiles `.tiles`), `c` Chic doré (Playfair, carte noire et or), vide = Simple.
+`pay_theme` (local, aussi dans le profil `th`) ; `applyTheme`/`setTheme`/`themePicker` (Réglages) ; `themeSheet()` proposé une fois (`pay_thc`). Jamais partagé dans les données du budget.
+Polices Google : Plus Jakarta Sans, Outfit, Nunito, Playfair Display. Test sans réseau : servir @fontsource via `page.route`.

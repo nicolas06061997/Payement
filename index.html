@@ -11,7 +11,7 @@
 <meta name="apple-mobile-web-app-capable" content="yes">
 <meta name="apple-mobile-web-app-title" content="Payement">
 <link rel="preconnect" href="https://fonts.googleapis.com"><link rel="preconnect" href="https://fonts.gstatic.com" crossorigin>
-<link href="https://fonts.googleapis.com/css2?family=Plus+Jakarta+Sans:wght@400;500;600;700;800&display=swap" rel="stylesheet">
+<link href="https://fonts.googleapis.com/css2?family=Plus+Jakarta+Sans:wght@400;500;600;700;800&family=Outfit:wght@400;500;600;700;800&family=Nunito:wght@400;600;700;800&family=Playfair+Display:wght@500;600;700&display=swap" rel="stylesheet">
 <style>
 :root{
   --bg:#f6f2f0;--card:#ffffff;--ink:#1f1a1d;--mute:#8d8489;--line:#eee7e4;--soft:#f7ecec;
@@ -173,6 +173,82 @@ p.help{color:var(--mute);font-size:14px;margin:2px 0 10px}
 .pad button{width:74px;height:74px;border-radius:50%;background:rgba(255,255,255,.16);color:#fff;font-size:28px;font-weight:600}
 .pad button:active{background:rgba(255,255,255,.4)}
 #lock .later{color:#fff;opacity:.85}
+
+/* ===== Styles au choix (propres à chaque téléphone : html[data-theme]) ===== */
+.tiles,.donut{display:none}
+/* A : Nuit violette */
+html[data-theme=a]{--bg:#0c0a17;--card:rgba(255,255,255,.055);--ink:#f3f0ff;--mute:#9a92bf;--line:rgba(255,255,255,.09);--soft:rgba(167,139,250,.16);
+  --brand:#c06cf0;--brand2:#f472b6;--in:#34d399;--out:#fb7185;--sav:#a78bfa;--warn:#fbbf24;--inS:rgba(16,185,129,.18);--outS:rgba(244,63,94,.18);--savS:rgba(139,92,246,.22);--shadow:none;color-scheme:dark}
+html[data-theme=a],html[data-theme=a] body{background:#0c0a17}
+html[data-theme=a] body{background:radial-gradient(120% 50% at 85% -5%,#3b1d6e,transparent 60%),radial-gradient(80% 40% at -10% 30%,#4a1640,transparent 60%),#0c0a17;background-attachment:fixed;font-family:Outfit,system-ui,sans-serif;padding-bottom:calc(104px + env(safe-area-inset-bottom))}
+[data-theme=a] header{background:rgba(12,10,23,.7)}
+[data-theme=a] .card,[data-theme=a] .mini{border:1px solid var(--line)}
+[data-theme=a] .month{border:1px solid var(--line)}
+[data-theme=a] .hero{background:linear-gradient(145deg,rgba(255,255,255,.13),rgba(255,255,255,.03));border:1px solid rgba(255,255,255,.14);box-shadow:0 20px 50px rgba(139,92,246,.28)}
+[data-theme=a] .hero::before,[data-theme=a] .hero::after{display:none}
+[data-theme=a] .hero .lbl{color:#c4b5fd}
+[data-theme=a] .hero .val{font-size:38px;background:linear-gradient(90deg,#fff,#f0abfc);-webkit-background-clip:text;background-clip:text;color:transparent;padding-right:96px}
+[data-theme=a] .hero .note{color:#a39bc4;padding-right:96px}
+[data-theme=a] .donut{display:block;position:absolute;right:18px;top:20px;width:88px;height:88px}
+[data-theme=a] .hbar2{display:none}[data-theme=a] .hst{margin-top:16px}
+[data-theme=a] .hst div{background:rgba(255,255,255,.06);border:1px solid rgba(255,255,255,.08)}
+[data-theme=a] .hst div:nth-child(1) b{color:#6ee7b7}[data-theme=a] .hst div:nth-child(2) b{color:#fda4af}[data-theme=a] .hst div:nth-child(3) b{color:#c4b5fd}
+[data-theme=a] .qa .c{border:0;color:#fff}
+[data-theme=a] .qa .g{background:linear-gradient(135deg,#10b981,#059669)}[data-theme=a] .qa .r{background:linear-gradient(135deg,#f43f5e,#be123c)}
+[data-theme=a] .qa .b{background:linear-gradient(135deg,#8b5cf6,#6d28d9)}[data-theme=a] .qa .o{background:linear-gradient(135deg,#f59e0b,#ea580c)}
+[data-theme=a] .sec button,[data-theme=a] .sec a{color:#f0abfc}
+[data-theme=a] nav{left:14px;right:14px;bottom:calc(12px + env(safe-area-inset-bottom));padding:6px;border-radius:24px;border:1px solid var(--line);background:rgba(25,20,45,.88)}
+[data-theme=a] nav button.on{color:#f0abfc}
+[data-theme=a] .sheet{background:#1a1630}
+[data-theme=a] #modal{background:rgba(0,0,0,.6)}
+[data-theme=a] .btn.alt{border:1px solid var(--line)}
+[data-theme=a] #upd{background:#2a2348;color:#fff}
+/* B : Coloré et joyeux */
+html[data-theme=b]{--bg:#fff8f1;--card:#ffffff;--ink:#2b2233;--mute:#9a8aa0;--line:#f3e6e0;--soft:#ffe9f0;--brand:#ff5f8f;--brand2:#ff9a6c;
+  --in:#1f9d63;--out:#ee4d6c;--sav:#6d5ff0;--warn:#e69a00;--inS:#d8f5e5;--outS:#ffe1df;--savS:#e6e3ff;--shadow:0 6px 20px rgba(43,34,51,.07);--r:26px;color-scheme:light}
+html[data-theme=b],html[data-theme=b] body{background:#fff8f1;font-family:Nunito,system-ui,sans-serif}
+[data-theme=b] .amt,[data-theme=b] .nm,[data-theme=b] h2,[data-theme=b] .btn{font-weight:800}
+[data-theme=b] .hero{box-shadow:0 18px 36px rgba(255,95,143,.35);border-radius:30px}
+[data-theme=b] .hero::before{display:none}
+[data-theme=b] .hero::after{content:"💸";background:none;width:auto;height:auto;left:auto;bottom:auto;right:14px;top:8px;font-size:58px;transform:rotate(12deg)}
+[data-theme=b] .hst{display:none}
+[data-theme=b] .hbar2{height:12px;margin-bottom:4px}
+[data-theme=b] .tiles{display:grid;grid-template-columns:1fr 1fr;gap:12px;margin:0 0 16px}
+.tiles .t{border-radius:24px;padding:14px 16px;color:#2b2233}.tiles .em{font-size:28px;line-height:1}.tiles small{display:block;font-weight:700;font-size:13px;opacity:.7;margin-top:6px}.tiles b{font-size:21px;font-weight:800;letter-spacing:-.3px}
+[data-theme=b] .qa .c{border-radius:22px}
+[data-theme=b] .sec h3{text-transform:none;letter-spacing:0;font-size:19px;font-weight:800;color:var(--ink)}
+[data-theme=b] nav{border-radius:26px 26px 0 0;border-top:0;box-shadow:0 -6px 20px rgba(43,34,51,.06);background:#fff}
+[data-theme=b] .ico{border-radius:16px}
+/* C : Chic noir et doré */
+html[data-theme=c]{--bg:#f6f1e9;--card:#fffaf2;--ink:#1d1a16;--mute:#9a8f80;--line:#ece2d1;--soft:#f1e8d8;--brand:#a8843f;--brand2:#c9a45c;
+  --in:#3f7d58;--out:#b4483c;--sav:#7a5a1e;--warn:#b07a12;--inS:#e6efe4;--outS:#f6e3df;--savS:#efe1c3;--shadow:none;color-scheme:light}
+html[data-theme=c],html[data-theme=c] body{background:#f6f1e9}
+[data-theme=c] .card,[data-theme=c] .mini,[data-theme=c] .month,[data-theme=c] .btn.alt{border:1px solid var(--line)}
+[data-theme=c] header h1,[data-theme=c] .sec h3,[data-theme=c] .card h2,[data-theme=c] .sheet h3,[data-theme=c] #ins h2,[data-theme=c] #sp h2{font-family:"Playfair Display",Georgia,serif;font-weight:700;letter-spacing:0}
+[data-theme=c] .sec h3{text-transform:none;font-size:21px;color:var(--ink)}
+[data-theme=c] .logo{background:#1d1a16;color:#c9a45c;border-radius:50%}
+[data-theme=c] .hero{background:linear-gradient(135deg,#1c1a17,#2e2a24);color:#f6efe2;box-shadow:0 20px 40px rgba(28,26,23,.3);border-radius:26px}
+[data-theme=c] .hero::before,[data-theme=c] .hero::after{background:none;border:1px solid rgba(201,164,92,.35)}
+[data-theme=c] .hero::before{width:260px;height:260px;right:-90px;top:-110px}[data-theme=c] .hero::after{width:180px;height:180px;left:auto;bottom:auto;right:-40px;top:-60px}
+[data-theme=c] .hero .lbl{color:#c9a45c;text-transform:uppercase;letter-spacing:1.4px;font-size:12px;font-weight:700}
+[data-theme=c] .hero .val{font-family:"Playfair Display",Georgia,serif;font-weight:600;letter-spacing:0}
+[data-theme=c] .hero .val small{color:#c9a45c;opacity:1}
+[data-theme=c] .hbar2{background:rgba(201,164,92,.2)}
+[data-theme=c] .hst div{background:transparent;padding:4px 0}[data-theme=c] .hst span{color:#b9ae9c}
+[data-theme=c] .qa .c{border-radius:50%;background:var(--card);border:1px solid #d9cdb8;color:var(--ink)}
+[data-theme=c] .ico{border-radius:50%}
+[data-theme=c] .chk.on{background:#1d1a16;border-color:#1d1a16;color:#c9a45c}
+[data-theme=c] .bar i{background:#a8843f}[data-theme=c] .bar.g i{background:#3f7d58}
+[data-theme=c] nav button.on{color:var(--ink)}[data-theme=c] nav button.on .p{background:transparent;color:#a8843f}
+[data-theme=c] #lock{background:linear-gradient(160deg,#2e2a24,#1c1a17)}[data-theme=c] .lkico{color:#c9a45c}
+[data-theme=c] .hero.blue{background:linear-gradient(135deg,#7a5a1e,#a8843f)}
+/* choix du style */
+.thm{display:grid;grid-template-columns:1fr 1fr;gap:10px}
+.thm button{border-radius:18px;padding:10px;text-align:left;border:2px solid var(--line);background:var(--bg)}
+.thm button.on{border-color:var(--brand)}
+.thm .pv{height:58px;border-radius:12px;margin-bottom:8px;position:relative;overflow:hidden}
+.thm .pv i{position:absolute;left:8px;right:8px;top:8px;height:24px;border-radius:8px}
+.thm b{font-size:14px}.thm small{display:block;color:var(--mute);font-size:12px}
 </style>
 </head>
 <body>
@@ -194,7 +270,7 @@ p.help{color:var(--mute);font-size:14px;margin:2px 0 10px}
 
 <script>
 'use strict';
-const APPV = '2026-11-10.1';
+const APPV = '2026-11-10.2';
 const KEY = 'pay_save';
 
 // ---------- Catégories ----------
@@ -306,6 +382,42 @@ function render(){
   const bb = document.getElementById('bioBtn'); if (bb) bioAvail().then(ok => { if (ok) bb.style.display = ''; });
 }
 
+// Anneau (style Nuit) : part des rentrées utilisée par les factures, dépenses et épargne.
+function donut(t){
+  const base = Math.max(t.inc, t.bills + t.out + t.sav, 1), C = 100;
+  const parts = [[t.bills, '#f472b6'], [t.out, '#a78bfa'], [t.sav, '#34d399']];
+  let off = 25, arcs = '';
+  parts.forEach(([v, c]) => { const l = v / base * C; if (l > 0.5) arcs += `<circle cx="21" cy="21" r="15.9" fill="none" stroke="${c}" stroke-width="5" stroke-dasharray="${l} ${C - l}" stroke-dashoffset="${off}"/>`; off -= l; });
+  const pc = t.inc ? Math.round((t.bills + t.out + t.sav) / t.inc * 100) : 0;
+  return `<svg class="donut" viewBox="0 0 42 42"><circle cx="21" cy="21" r="15.9" fill="none" stroke="rgba(255,255,255,.1)" stroke-width="5"/>${arcs}
+    <text x="21" y="22" text-anchor="middle" fill="#fff" font-size="7.5" font-weight="700">${pc}%</text><text x="21" y="28" text-anchor="middle" fill="#a39bc4" font-size="3.6">utilisé</text></svg>`;
+}
+// ---------- Styles (propres à chaque téléphone, gardés dans le profil) ----------
+const THEMES = [['a', 'Nuit violette', 'Sombre et classe', 'linear-gradient(135deg,#3b1d6e,#0c0a17)', 'linear-gradient(90deg,#f472b6,#8b5cf6)'],
+  ['b', 'Coloré', 'Gai et joyeux', '#fff8f1', 'linear-gradient(90deg,#ff9a6c,#ff5f8f)'],
+  ['c', 'Chic doré', 'Noir, crème et or', '#f6f1e9', 'linear-gradient(90deg,#1c1a17,#2e2a24)'],
+  ['', 'Simple', 'Le style de départ', '#f6f2f0', 'linear-gradient(90deg,#f08a5d,#c43d5c)']];
+const curTheme = () => { try { return localStorage.getItem('pay_theme') || ''; } catch(e) { return ''; } };
+function applyTheme(t){
+  if (t) document.documentElement.dataset.theme = t; else delete document.documentElement.dataset.theme;
+  const col = { a: '#0c0a17', b: '#fff8f1', c: '#f6f1e9' }[t];
+  document.querySelectorAll('meta[name=theme-color]').forEach(m => { if (col) m.setAttribute('content', col); else m.setAttribute('content', m.media.includes('dark') ? '#141113' : '#f6f2f0'); });
+}
+function setTheme(t){ try { localStorage.setItem('pay_theme', t); localStorage.setItem('pay_thc', '1'); } catch(e) {} applyTheme(t); profSave(); render(); }
+function themePicker(){
+  const c = curTheme();
+  return `<div class="thm">${THEMES.map(x => `<button class="${c === x[0] ? 'on' : ''}" onclick="setTheme('${x[0]}');${formDone && formDone.thm ? 'closeM()' : ''}">
+    <div class="pv" style="background:${x[3]}"><i style="background:${x[4]}"></i></div><b>${x[1]}</b><small>${x[2]}</small></button>`).join('')}</div>`;
+}
+function themeSheet(){
+  formDone = { thm: 1 };
+  document.getElementById('sheet').innerHTML = `<h3>🎨 Nouveau : choisissez votre style</h3>
+    <p class="help">Seulement sur ce téléphone. Votre femme / votre mari peut choisir un autre style : vous verrez toujours les mêmes chiffres.</p>${themePicker()}
+    <p class="help" style="margin-top:12px">Vous pourrez changer quand vous voulez dans ⚙️ Réglages.</p>`;
+  document.getElementById('modal').classList.add('on');
+}
+applyTheme(curTheme());
+
 function home(){
   const t = totals(cur), bl = billsOf(cur), todo = bl.filter(b => !isPaid(b, cur));
   const totSaved = totSav();
@@ -317,6 +429,7 @@ function home(){
   const sorties = t.bills + t.out, base = Math.max(t.inc, sorties + t.sav, 1);
   return `
   <div class="hero">
+    ${donut(t)}
     <div class="lbl">Il reste pour ${esc(mName(cur))}</div>
     <div class="val">${eurH(t.rest)}</div>
     <div class="note">${t.rest < 0 ? '⚠️ Plus de sorties que de rentrées' : 'après factures, dépenses et épargne'}</div>
@@ -326,6 +439,12 @@ function home(){
       <div><span>Sorties</span><b>${eur(sorties)}</b></div>
       <div><span>Épargne</span><b>${eur(t.sav)}</b></div>
     </div>
+  </div>
+  <div class="tiles">
+    <div class="t" style="background:#d8f5e5"><div class="em">💼</div><small>Rentrées</small><b>${eur(t.inc)}</b></div>
+    <div class="t" style="background:#ffe1df"><div class="em">🧾</div><small>Factures</small><b>${eur(t.bills)}</b></div>
+    <div class="t" style="background:#fff1c7"><div class="em">🛒</div><small>Dépenses</small><b>${eur(t.out)}</b></div>
+    <div class="t" style="background:#e6e3ff"><div class="em">🐷</div><small>Épargne</small><b>${eur(t.sav)}</b></div>
   </div>
   <div class="qa">
     <button data-act="addMv" data-t="in"><span class="c g">${svg('plus')}</span>Rentrée</button>
@@ -463,6 +582,9 @@ function set(){
       ${bioId() ? '<button class="btn alt small" onclick="bioOff()">Désactiver l\'empreinte</button>' : '<button class="btn alt small" id="bioBtn" onclick="bioSetup()" style="display:none">👆 Activer l\'empreinte / le visage</button>'}`
     : `<p class="help">Protégez l'appli avec un code à 4 chiffres (et votre empreinte). Chacun a son propre code sur son téléphone.</p>
       <button class="btn" style="width:100%" onclick="pinSetup()">🔒 Mettre un code</button>`}</div>
+  <div class="card"><h2>🎨 Style de l'appli</h2>
+    <p class="help">Seulement sur ce téléphone : chacun peut choisir le sien, les chiffres restent les mêmes.</p>
+    ${themePicker()}</div>
   <div class="card"><h2>👋 Ce téléphone</h2>
     <div class="row"><span>Prénom : <b>${esc(me() || '—')}</b></span><button class="btn small alt" onclick="whoSheet()">Changer</button></div></div>
   <div class="card"><h2>📲 Installer et mettre à jour</h2>
@@ -884,13 +1006,15 @@ function profSave(){
   let p = byId(st.prof, myProfId()) || st.prof.find(x => x.nm && x.nm.toLowerCase() === me().toLowerCase());
   if (!p) { p = { id: uid() }; st.prof.push(p); }
   try { localStorage.setItem('pay_prof', p.id); } catch(e) {}
-  touch(Object.assign(p, { nm: me(), pin: pinH(), bio: bioId() }));
+  touch(Object.assign(p, { nm: me(), pin: pinH(), bio: bioId(), th: curTheme() }));
   save();
 }
 function useProf(p){
   try { localStorage.setItem('pay_prof', p.id); localStorage.setItem('pay_me', p.nm);
     if (p.pin) localStorage.setItem('pay_pin', p.pin); else localStorage.removeItem('pay_pin');
-    if (p.bio) localStorage.setItem('pay_bio', p.bio); else localStorage.removeItem('pay_bio'); } catch(e) {}
+    if (p.bio) localStorage.setItem('pay_bio', p.bio); else localStorage.removeItem('pay_bio');
+    if (p.th !== undefined) { localStorage.setItem('pay_theme', p.th || ''); localStorage.setItem('pay_thc', '1'); } } catch(e) {}
+  applyTheme(curTheme());
   closeM(); render();
   if (p.pin) { lockScreen(); toast('Tapez votre code pour confirmer'); } else toast('Bonjour ' + p.nm + ' 👋');
 }
@@ -1138,6 +1262,7 @@ function onboard(){
   if (document.getElementById('ins').classList.contains('on') || document.getElementById('lock').classList.contains('on')) return;
   if (!SEC) return famScreen();
   if (!me()) return setTimeout(whoSheet, 300);
+  if (!localStorage.getItem('pay_thc') && !formDone) setTimeout(() => { if (!formDone && !document.getElementById('lock').classList.contains('on')) { try { localStorage.setItem('pay_thc', '1'); } catch(e) {} themeSheet(); } }, 600);
 }
 function insLater(){ try { localStorage.setItem('pay_ins', Date.now()); } catch(e) {} hideIns(); }
 
