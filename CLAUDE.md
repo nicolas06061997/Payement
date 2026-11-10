@@ -60,3 +60,9 @@ Police Plus Jakarta Sans (Google Fonts), couleurs dans `:root` (clair/sombre), i
 Bouton Facture de l'accueil → `billChoice()` (photo ou à la main) ; onglet Factures : « 📷 Avec une photo » (`#billIn`).
 `ocrText(file, quoi)` (Tesseract, partagé avec la fiche de paye) → `parseBill()` : fournisseur (`PROV` : nom + catégorie, sinon 1re ligne), montant (« montant à payer / total à payer / à payer », sinon « total TVAC »), échéance (« avant le / échéance… »), communication structurée +++…+++, IBAN BE.
 Préremplit `billForm(null, pre)` en « une seule fois » au mois de l'échéance ; champs `com`/`iban` sur toutes les factures, boutons 📋 pour les copier (`data-act=copy2`).
+
+## Profils (pour tout retrouver après avoir effacé les données du navigateur)
+`st.prof` (partagé et chiffré comme le reste) = `{id,nm,pin,bio,u}` ; `pay_prof` (local) = profil de ce téléphone.
+`profSave()` après chaque changement de prénom, code ou empreinte ; créé tout seul au démarrage si absent.
+`whoSheet()` propose les prénoms existants → `useProf()` remet prénom, code et empreinte, puis demande le code pour confirmer.
+« Code oublié » retire le code du profil (puis `sync`) avant d'effacer le téléphone. `navigator.storage.persist()` au démarrage.

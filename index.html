@@ -194,7 +194,7 @@ p.help{color:var(--mute);font-size:14px;margin:2px 0 10px}
 
 <script>
 'use strict';
-const APPV = '2026-11-09.10';
+const APPV = '2026-11-10.1';
 const KEY = 'pay_save';
 
 // ---------- Catégories ----------
@@ -211,7 +211,7 @@ const ico = (list, k) => (list.find(c => c[0] === k) || list[list.length - 1])[1
 const catName = (list, k) => (list.find(c => c[0] === k) || list[list.length - 1])[2];
 
 // ---------- Sauvegarde ----------
-function blank(){ return { sv:2, bills:[], paid:{}, inc:[], mv:[], goals:[], dep:[], acc:[], gone:{} }; }
+function blank(){ return { sv:2, bills:[], paid:{}, inc:[], mv:[], goals:[], dep:[], acc:[], prof:[], gone:{} }; }
 function load(){
   try { const s = JSON.parse(localStorage.getItem(KEY)); if (s && s.sv) return upg(Object.assign(blank(), s)); } catch(e) {}
   return blank();
@@ -835,9 +835,9 @@ document.addEventListener('click', e => {
     case 'reset':
       if (confirm('Tout effacer ? Ce sera aussi effacé sur l\'autre téléphone.') && confirm('Vraiment ? Ce n\'est pas réversible.')) {
         const g = { ...st.gone }, n = Date.now(), p = {};
-        ['bills','inc','mv','goals','dep','acc'].forEach(k => st[k].forEach(x => g[x.id] = n));
+        ['bills','inc','mv','goals','dep','acc'].forEach(k => st[k].forEach(x => g[x.id] = n)); const keepProf = st.prof;
         for (const k in st.paid) p[k] = { v: false, u: n };
-        st = blank(); st.gone = g; st.paid = p; save(); render(); toast('Tout est effacé');
+        st = blank(); st.prof = keepProf; st.gone = g; st.paid = p; save(); render(); toast('Tout est effacé');
       }
       break;
   }
@@ -876,16 +876,40 @@ function toast(m){ const t = document.getElementById('toast'); t.textContent = m
 
 // ---------- Prénom de ce téléphone (jamais partagé) ----------
 const me = () => { try { return localStorage.getItem('pay_me') || ''; } catch(e) { return ''; } };
+// Profils (partagés, chiffrés avec le reste) : prénom + empreinte du code + empreinte de doigt de chaque personne.
+// Si on efface les données du navigateur, il suffit de retaper le mot de famille puis de toucher son prénom.
+const myProfId = () => { try { return localStorage.getItem('pay_prof') || ''; } catch(e) { return ''; } };
+function profSave(){
+  if (!me()) return;
+  let p = byId(st.prof, myProfId()) || st.prof.find(x => x.nm && x.nm.toLowerCase() === me().toLowerCase());
+  if (!p) { p = { id: uid() }; st.prof.push(p); }
+  try { localStorage.setItem('pay_prof', p.id); } catch(e) {}
+  touch(Object.assign(p, { nm: me(), pin: pinH(), bio: bioId() }));
+  save();
+}
+function useProf(p){
+  try { localStorage.setItem('pay_prof', p.id); localStorage.setItem('pay_me', p.nm);
+    if (p.pin) localStorage.setItem('pay_pin', p.pin); else localStorage.removeItem('pay_pin');
+    if (p.bio) localStorage.setItem('pay_bio', p.bio); else localStorage.removeItem('pay_bio'); } catch(e) {}
+  closeM(); render();
+  if (p.pin) { lockScreen(); toast('Tapez votre code pour confirmer'); } else toast('Bonjour ' + p.nm + ' 👋');
+}
 function whoSheet(){
+  const pr = st.prof.filter(p => p.nm);
   document.getElementById('sheet').innerHTML = `<h3>👋 Qui utilise ce téléphone ?</h3>
-    <p class="help">Votre prénom s'affiche à côté de ce que vous ajoutez, pour savoir qui a fait quoi.</p>
+    ${pr.length ? `<p class="help">Touchez votre prénom : vos réglages (code, empreinte) reviennent.</p>
+      <div class="btns" style="flex-wrap:wrap">${pr.map(p => `<button class="btn" style="min-width:40%" data-prof="${p.id}">${esc(p.nm)}</button>`).join('')}</div>
+      <p class="help">Quelqu'un d'autre ? Écrivez son prénom :</p>`
+    : `<p class="help">Votre prénom s'affiche à côté de ce que vous ajoutez, pour savoir qui a fait quoi.</p>`}
     <div class="f"><input id="meIn" placeholder="ex : Nico" value="${esc(me())}"></div>
-    <div class="btns"><button class="btn" id="meOk">C'est moi</button></div>`;
+    <div class="btns"><button class="btn ${pr.length ? 'alt' : ''}" id="meOk">C'est moi</button></div>`;
   document.getElementById('modal').classList.add('on'); formDone = { who: 1 };
+  document.querySelectorAll('#sheet [data-prof]').forEach(b => b.onclick = () => useProf(byId(st.prof, b.dataset.prof)));
   document.getElementById('meOk').onclick = () => {
     const v = document.getElementById('meIn').value.trim(); if (!v) return toast('Écrivez votre prénom');
+    const same = pr.find(p => p.nm.toLowerCase() === v.toLowerCase()); if (same && same.id !== myProfId()) return useProf(same);
     try { localStorage.setItem('pay_me', v); } catch(e) {}
-    closeM(); render(); toast('Bonjour ' + v + ' 👋');
+    profSave(); closeM(); render(); toast('Bonjour ' + v + ' 👋');
     if (!pinH()) setTimeout(() => { if (confirm('Voulez-vous protéger l\'appli avec un code (et votre empreinte) ?')) pinSetup(); }, 700);
   };
 }
@@ -939,7 +963,7 @@ async function unseal(x){
   const pt = await crypto.subtle.decrypt({ name:'AES-GCM', iv: all.slice(0, 12) }, KEYC, all.slice(12));
   return JSON.parse(new TextDecoder().decode(pt));
 }
-const LISTS = ['bills','inc','mv','goals','dep','acc'];
+const LISTS = ['bills','inc','mv','goals','dep','acc','prof'];
 function norm(x){
   if (x === null || x === undefined || x === '') return undefined;
   if (typeof x !== 'object') return x;
@@ -1174,6 +1198,7 @@ async function pinKey(k){
   } else if (pinMode === 'set1') { pinFirst = pinBuf; pinMode = 'set2'; pinBuf = ''; setTimeout(drawLock, 150); }
   else if (pinBuf === pinFirst) {
     try { localStorage.setItem('pay_pin', await hashPin(pinBuf)); } catch(e) {}
+    profSave();
     unlock(); toast('🔒 Code enregistré');
     if (await bioAvail() && !bioId()) setTimeout(() => { if (confirm('Utiliser aussi votre empreinte de doigt (ou votre visage) pour ouvrir l\'appli ?')) bioSetup(); }, 400);
     else render();
@@ -1182,9 +1207,12 @@ async function pinKey(k){
 function shake(){ pinBuf = ''; setTimeout(() => { drawLock(); const n = document.querySelector('.dots'); if (n) { n.classList.add('bad'); } }, 120); if (navigator.vibrate) navigator.vibrate(150); }
 function unlock(){ document.getElementById('lock').classList.remove('on'); pinBuf = ''; onboard(); render(); }
 function pinCancel(){ document.getElementById('lock').classList.remove('on'); pinBuf = ''; render(); }
-function pinOff(){ if (!confirm('Enlever le code d\'accès sur ce téléphone ?')) return; try { localStorage.removeItem('pay_pin'); localStorage.removeItem('pay_bio'); } catch(e) {} render(); toast('Code enlevé'); }
-function pinForgot(){
+function pinOff(){ if (!confirm('Enlever le code d\'accès sur ce téléphone ?')) return; try { localStorage.removeItem('pay_pin'); localStorage.removeItem('pay_bio'); } catch(e) {} profSave(); render(); toast('Code enlevé'); }
+async function pinForgot(){
   if (!confirm('Code oublié ? Ce téléphone va être remis à zéro.\n\nVos chiffres restent en sécurité en ligne : il suffira de retaper votre mot de famille.')) return;
+  // Le code oublié est aussi retiré du profil, sinon il serait redemandé après avoir retapé le mot de famille.
+  const p = byId(st.prof, myProfId());
+  if (p) { touch(Object.assign(p, { pin: '', bio: '' })); saveLocal(); try { await sync(); } catch(e) {} }
   try { Object.keys(localStorage).filter(k => k.startsWith('pay_')).forEach(k => localStorage.removeItem(k)); } catch(e) {}
   location.reload();
 }
@@ -1197,7 +1225,7 @@ async function bioSetup(){
       user: { id: crypto.getRandomValues(new Uint8Array(16)), name: me() || 'Payement', displayName: me() || 'Payement' },
       pubKeyCredParams: [{ type:'public-key', alg:-7 }, { type:'public-key', alg:-257 }],
       authenticatorSelection: { authenticatorAttachment:'platform', userVerification:'required', residentKey:'discouraged' }, timeout: 60000 } });
-    localStorage.setItem('pay_bio', b64(new Uint8Array(c.rawId))); toast('👆 Empreinte activée'); render();
+    localStorage.setItem('pay_bio', b64(new Uint8Array(c.rawId))); profSave(); toast('👆 Empreinte activée'); render();
   } catch(e) { toast('Empreinte pas activée'); render(); }
 }
 async function bioUnlock(){
@@ -1208,7 +1236,7 @@ async function bioUnlock(){
     unlock();
   } catch(e) {}
 }
-function bioOff(){ try { localStorage.removeItem('pay_bio'); } catch(e) {} render(); toast('Empreinte désactivée'); }
+function bioOff(){ try { localStorage.removeItem('pay_bio'); } catch(e) {} profSave(); render(); toast('Empreinte désactivée'); }
 
 // Lien d'invitation : …/#rejoindre=CODE
 function readInvite(){
@@ -1219,11 +1247,12 @@ function readInvite(){
 }
 
 (async () => {
+  try { if (navigator.storage && navigator.storage.persist) navigator.storage.persist(); } catch(e) {}
   readInvite();
   if (pinH()) lockScreen();
   render();
   await initKey();
-  setSy(''); startStream(); sync(); chkUpd();
+  setSy(''); startStream(); sync().then(() => { if (SEC && me() && !byId(st.prof, myProfId())) profSave(); }); chkUpd();
   if (!showIns()) onboard();
 })();
 </script>
