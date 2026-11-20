@@ -73,3 +73,15 @@ Préremplit `billForm(null, pre)` en « une seule fois » au mois de l'échéanc
 Polices Google : Plus Jakarta Sans, Outfit, Nunito, Playfair Display. Test sans réseau : servir @fontsource via `page.route`.
 - 10/11 : carte `.hero` en haut de chaque page (Factures : reste à payer ; Argent : rentrées − dépenses, actions rondes `.qa`) ; la carte de l'accueil a la classe `home` (anneau A, tuiles B). Chic doré : boutons noir/or, icônes `.ico` sépia sans fond, petits dessins retirés des titres dans `render()`.
 - Manifeste en `fullscreen` (comme Céline) : plus de barre de couleur en bas sur Android. Un téléphone déjà installé garde l'ancienne couleur jusqu'à la mise à jour de Chrome ou une réinstallation.
+
+## Améliorations du 20/11 (tri, scan, budgets, bilan)
+- `st.cfg` (nouvelle liste partagée {id,v,u}, dans `LISTS`) : `bud_<cat>` = budget mensuel (`budOf`, `budForm`, alerte 80/100 % au retour de `mvForm`), `carry` = premier mois dont le reste est reporté (`carryOf`, `carryForm`). `totals()` = `baseTotals()` + report.
+- Factures : `amtOf(b,m)` (montant d'un seul mois dans `b.ov[mois]`), `b.auto` = domiciliation (badge, `autoDue`/`autoPay`), `b.note` ; `sortBills` (à payer d'abord), `daysTo`/`dueBadge` (« En retard », « Dans X jours »). `billForm(b, pre, mois)`.
+- Contrôle modulo 97 : `ibanOK`, `comOK`, indications en direct (`VALID`, `chkField`). Lecture : `findIban`/`findCom` corrigent O→0, l→1…
+- Scan : `readDoc()` = PDF (`pdfRead`, pdf.js 3.11.174 à la demande, worker recopié en Blob) ou image (`prepImg` : gris + contraste) ; QR EPC lu d'abord (`findQR` : BarcodeDetector sinon jsQR 1.4.0, `parseEPC`). Texte collé : `billPaste` → `fillBill(parseBill(...))`. QR pour payer : `payQR` (qrcode-generator 1.4.4, `epcText`).
+- Montants : `num()` = `calc()` (accepte 45,20+12,80, 3x15, 1.234,56) ; touches `.ops` sous chaque champ montant (`calcKey`).
+- Suppressions sans confirmation mais avec « Annuler » 5 s (`snap`/`offerUndo`/`doUndo`). Versements supprimables (`depDel`).
+- Point vert → `syncSheet()` ; `busy()` empêche le rechargement automatique pendant une saisie (`pendUpd`, relancé à `closeM`).
+- Accueil : par jour jusqu'à la fin du mois, `soonBills()` (7 jours), `lastOps()`. Mêmes boutons `qaHTML()` sur Accueil et Argent. Glisser sur `.hero` = changer de mois. `buzz()` = vibration.
+- Argent : `quickOut()`, recherche/filtres `mvF` (`mvListHTML` mis à jour sans tout redessiner). Épargne : `goalPace`/`goalProj`. Écran `stats` (hors barre du bas) : `barChart`, `lineChart`, `savAt`.
+- Test : servir jsqr, qrcode-generator, pdfjs-dist@3.11.174 et Tesseract depuis node_modules via `page.route`.
